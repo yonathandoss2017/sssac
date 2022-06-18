@@ -1,14 +1,23 @@
 <?php
 	header('Content-Type: text/html');
-	include_once("drive.php");
+	$url = "https://issuetracker.google.com/action/issues/236298588/attachments/37716633?download.mp4";
 
-	$url = (!isset($_GET['id']) || !$_GET['id']) ? 'https://drive.google.com/file/d/0ByaRd0R0Qyatcmw2dVhQS0NDU0U/view' : $_GET['id'];
-	if($url) {
-	  preg_match('@^(?:http.?://)?([^/]+)@i', $url, $matches);
-	  $host = $matches[1];
-		$id = (strpos($url, 'drive.google.com') !== false) ? get_drive_id($url) : $id = $_GET['id'];
-		$results = json_decode(GoogleDrive($id), true);
-	}
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_HEADER, true);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_VERBOSE, 1);
+curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+$result = curl_exec($ch);
+preg_match("!\r\n(?:Location|URI): *(.*?) *\r\n!", $result, $matches);
+$url = $matches[1];
+echo $url;
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,8 +37,8 @@
 	<main role="main" class="container">
 		<h1 class="mt-5 text-center">Google Drive Player Script</h1>
 		<br />
-		<video poster="<?php echo $results['image']; ?>" id="player" playsinline controls>
-			<source src="<?php echo $results['file'];?>" type="<?php echo $results['type'];?>">
+		<video poster="<?php echo $url;?" id="player" playsinline controls>
+			<source src="<?php echo $url;?>" type="<?php echo $url;?">
 		</video>
 
 		<br />
