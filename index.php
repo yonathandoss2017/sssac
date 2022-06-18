@@ -1,5 +1,5 @@
 <?php
-	header('Content-Type: text/html');
+
 	$url = "https://issuetracker.google.com/action/issues/236298588/attachments/37716633?download.mp4";
 
 $ch = curl_init();
